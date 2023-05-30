@@ -58,6 +58,7 @@ class StopRepository(val database: AppDb /* local data store */,
 
             return stops;
         } catch(e: Exception) {
+            Log.e("Remote", e.message.toString())
             return database.stopFeatureDao().getAllByAgency(agencyId, like);
         }
     }
@@ -65,10 +66,7 @@ class StopRepository(val database: AppDb /* local data store */,
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getDeparturesForStopFrom(stopId: Long, agencyId: Long, from: Instant): List<DepartureView> {
         try {
-            Log.w("FCASKFSAF", "PICOOOO");
             val departures = remoteDataSource.fetchDepartures(stopId, agencyId, from)
-
-            Log.e("FUCK", "Departures: ${departures.size}")
 
             /* cache the results */
             departures.forEach {

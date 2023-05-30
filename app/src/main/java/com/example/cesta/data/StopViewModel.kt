@@ -30,39 +30,12 @@ class StopViewModel(val repo: StopRepository) : ViewModel() {
         private set
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun fetch() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val stops = repo.getStops()
-
-            uiState = uiState.copy(stops.map { item ->
-                StopInfoUiState(item, repo.getDeparturesForStopFrom(item.id, item.agencyId, Clock.System.now()))
-            })
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
     fun fetchStopFeatures(like: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            // uiState = uiState.copy(features = repo.getAgencyStopFeatures(1, like))
             val features = repo.getAgencyStopFeatures(1, like)
             uiState = uiState.copy(features = features, stops = features.map { item ->
                 StopInfoUiState(Stop(item.id, item.agencyId, item.name), repo.getDeparturesForStopFrom(item.id, item.agencyId, Clock.System.now()))
             })
         }
-    }
-
-    fun populate() {
-        /* viewModelScope.launch(Dispatchers.IO) {
-            val neredin = repo.addStop(Stop(0, "Neredin, Krematorium"))
-            val posta = repo.addStop(Stop(0, "Foerstrova Posta"))
-
-            val route1 = repo.addRoute(Route(0, "Nereding", "7", Red.toArgb().toString(), 1))
-            val route2 = repo.addRoute(Route(0, "Fibichova", "3", Blue.toArgb().toString(), 1))
-
-            repo.addDeparture(Departure(0, neredin.id, route1.routeId, Clock.System.now()))
-            repo.addDeparture(Departure(0, neredin.id, route2.routeId, Clock.System.now().plus(10, DateTimeUnit.MINUTE)))
-            repo.addDeparture(Departure(0, neredin.id, route1.routeId, Clock.System.now().plus(32, DateTimeUnit.MINUTE)))
-            repo.addDeparture(Departure(0, neredin.id, route2.routeId, Clock.System.now().plus(54, DateTimeUnit.MINUTE)))
-        } */
     }
 }

@@ -32,30 +32,6 @@ class CestaRemoteDataSource(private val cestaApi: CestaApi = CestaApi(),
     suspend fun fetchTripDepartures(agencyId: Long, tripId: Long) : TripDeparturesApiResponse =
         withContext(ioDispatcher) {
             cestaApi.fetchTripDepartures(agencyId, tripId)
-
-            /* Pair(
-                    Trip(
-                        result.trip.id,
-                        result.trip.agencyId,
-                        result.trip.routeId,
-                        null,
-                        result.trip.headsign
-                    ),
-            result.departures.map { x ->
-                Departure(
-                    x.id,
-                    x.agencyId,
-                    x.stopId,
-                    x.stop,
-                    result.trip.routeId,
-                    x.tripId,
-                    x.sequence,
-                    LocalDateTime(
-                        Clock.System.now().toLocalDateTime(TimeZone.UTC).date,
-                        x.departure
-                    ).toInstant(TimeZone.UTC)
-                )
-            }) */
         }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -67,12 +43,12 @@ class CestaRemoteDataSource(private val cestaApi: CestaApi = CestaApi(),
                         x.id,
                         x.agencyId,
                         x.stopId,
-                        0,
+                        x.trip!!.routeId,
                         x.tripId,
                         x.sequence,
                         LocalDateTime(Clock.System.now().toLocalDateTime(TimeZone.UTC).date, x.departure).toInstant(TimeZone.UTC)),
                     Route(
-                        x.trip!!.route!!.id,
+                        x.trip.route!!.id,
                         x.trip.headsign,
                         x.trip.route!!.shortName,
                         Color.parseColor("#" + x.trip.route.color).toColor().toArgb().toString(),
